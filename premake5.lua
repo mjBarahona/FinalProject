@@ -79,6 +79,7 @@ project "Demo"
     includedirs
     {
         "ModelCompressor/include",
+        "ModelCompressor/deps",
         "%{prj.name}/include",
     }
 
