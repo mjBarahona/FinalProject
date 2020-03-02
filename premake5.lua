@@ -1,5 +1,5 @@
 workspace "FinalProject"
-    architecture "x64"
+    architecture "x86_64"
     startproject "Demo"
 
     configurations
@@ -9,6 +9,8 @@ workspace "FinalProject"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
+
+include  "ModelCompressor/deps/miniz"
 
 project "ModelCompressor"
     location "ModelCompressor"
@@ -39,22 +41,22 @@ project "ModelCompressor"
         "%{prj.name}/deps",
     }
 
-    --links
-    --{
-        
-    --}
+    links
+    {
+        "MiniZ"
+    }
 
     filter "configurations:Debug"
-        defines
-        {
-            "PE_DEBUG"
-        }
+        -- defines
+        -- {
+        --     "PE_DEBUG"
+        -- }
         runtime "Debug"
         symbols "On"
         buildoptions "/MTd"
 
     filter "configurations:Release"
-        defines "PE_RELEASE"
+        -- defines "PE_RELEASE"
         runtime "Release"
         optimize "Speed"
         buildoptions "/MT"
@@ -89,14 +91,14 @@ project "Demo"
     }
 
     filter "configurations:Debug"
-        defines
-        {
-            "PE_DEBUG"
-        }
+        -- defines
+        -- {
+        --     "PE_DEBUG"
+        -- }
         runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
-        defines "PE_RELEASE"
+        -- defines "PE_RELEASE"
         runtime "Release"
         optimize "Speed"

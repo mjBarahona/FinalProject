@@ -1,65 +1,22 @@
 #include "prech.h"
-#include <stdio.h>  /* defines FILENAME_MAX */
-
+#include <stdio.h>  
 
 #include "Compressor.h"
+#include "Timer.h"
+
 int main() {
 	
-	//std::cout << MC::text();
-	//std::cin.get();
+	C3D::ObjData data;
+	
+	//C3D::Compressor::CompressModel("fire2.obj", "fire2C3D");
+	//C3D::Compressor::DecompressModel("fire2C3D.C3D", data);
 
-	//char buff[FILENAME_MAX];
-	//GetCurrentDir(buff, FILENAME_MAX);
-	//std::string current_working_dir(buff);
-	//std::cout << current_working_dir.c_str() << std::endl;
+	Timer::Start();
+	C3D::Compressor::CompressModel("manbody.obj", "manbodyC3D");
+	Timer::Time("Compression function with FIXED_POINT");
+	Timer::Start();
+	C3D::Compressor::DecompressModel("manbodyC3D.C3D", data);
+	Timer::Time("Decompression function with FIXED_POINT");
 
-	//FILE * pFile;
-	//long lSize;
-	//char * buffer;
-	//size_t result;
-	//
-	//pFile = fopen("manbody.obj", "r");
-	//if (pFile == NULL) { fputs("File error", stderr); 
-	//printf("\nOh dear, something went wrong with read()! %s\n", strerror(errno)); 
-	//exit(1); }
-
-	//// obtain file size:
-	//fseek(pFile, 0, SEEK_END);
-	//lSize = ftell(pFile);
-	//rewind(pFile);
-
-	//// allocate memory to contain the whole file:
-	//buffer = (char*)malloc(sizeof(char)*lSize);
-	//if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
-	//memset(buffer, 0, lSize);
-	//// copy the file into the buffer:
-	//result = fread(buffer, 1, lSize, pFile);
-	//if (result !=lSize) { fputs("Reading error", stderr); exit(3); }
-
-	///* the whole file is now loaded in the memory buffer. */
-	///*for (int i = 0; i < result; i++) {
-	//	printf("%d %c ", buffer[i], buffer[i]);
-
-	//}*/
-	//fclose(pFile);
-	//pFile = fopen("temp.bin", "wb");
-	//if (pFile == NULL) {
-	//	fputs("File error", stderr);
-	//	printf("\nOh dear, something went wrong with read()! %s\n", strerror(errno));
-	//	exit(1);
-	//}
-	//byte* bytes = new byte[result];
-
-	//fwrite(bytes, sizeof(char), result, pFile);
-	//rewind(pFile);
-	//// terminate
-	//fclose(pFile);
-	//free(buffer);
-
-	Compressor prueba;
-	prueba.CompressModel("fire2.obj");
-	//prueba.CompressModel("manbody.obj");
-	std::cout << "se fini" << std::endl;
-	//std::cin.get();
 	return 0;
 }
