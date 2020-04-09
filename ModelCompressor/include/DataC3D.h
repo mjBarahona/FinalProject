@@ -33,9 +33,9 @@ namespace C3D {
 		std::vector<vec3> vertices;
 		std::vector<vec3> normals;
 		std::vector<vec2> textures;
-		std::vector<int32_t> v_indexes;
-		std::vector<int32_t> n_indexes;
-		std::vector<int32_t> t_indexes;
+		std::vector<uint32_t> v_indexes;
+		std::vector<uint32_t> n_indexes;
+		std::vector<uint32_t> t_indexes;
 	};
 
 	//Info obj without floating point
@@ -43,9 +43,18 @@ namespace C3D {
 		std::vector<ivec3> vertices;
 		std::vector<ivec3> normals;
 		std::vector<ivec2> textures;
-		std::vector<int32_t> v_indexes;
-		std::vector<int32_t> n_indexes;
-		std::vector<int32_t> t_indexes;
+		std::vector<uint32_t> v_indexes;
+		std::vector<uint32_t> n_indexes;
+		std::vector<uint32_t> t_indexes;
 	};
 	
+	static struct MinMax {
+		vec3 v_min, v_max;
+		vec3 n_min, n_max;
+		vec2 t_min, t_max;
+
+		vec3 v_size;
+		vec3 n_size;
+		vec2 t_size;
+	};
 }

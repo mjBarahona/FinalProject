@@ -16,10 +16,10 @@ void Timer::Start() {
 }
 
 
-void Timer::Time(std::string msg) {
+void Timer::Time(std::string msg, long *time) {
 	auto duration = duration_cast<milliseconds>(high_resolution_clock::now() - start_);
 	if (!msg.empty()) {
 		std::cout << msg << " : " << duration.count() << " in milliseconds" << std::endl;
 	}
-	
+	if (time) *time = duration.count();
 }

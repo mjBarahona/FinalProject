@@ -41,3 +41,5 @@
 .vs
 bin
 build
+*.txt
+*.C3D
