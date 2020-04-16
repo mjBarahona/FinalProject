@@ -15,15 +15,13 @@ uint8_t g_quantizedBits;
 
 namespace C3D {
 	
-	static inline int16_t ToFx(float info, const uint8_t& bits) { return (int16_t)(info * (float)(1 << bits)); }
-	static inline float ToFloat(int16_t info,const uint8_t& bits) {
-		float f = 1.0f / (float)(1 << bits);
-		return f * (float)info;
-	}
+	static inline int32_t ToFx(float info, const uint8_t& bits) { return (int32_t)(info * (float)(1 << bits)); }
+	static inline float ToFloat(int32_t info,const float& bits) { return (float)info * bits; }
 
 	static void LoopToFxV3(std::vector<ivec3>& ui, const std::vector<vec3>& f, const uint8_t& bits)
 	{
 		ui.clear();
+		ui.reserve(f.size());
 		for (uint32_t i = 0; i < f.size(); ++i) {
 			ivec3 value;
 			value.x = ToFx(f[i].x, bits);
@@ -36,6 +34,7 @@ namespace C3D {
 	static void LoopToFxV2(std::vector<ivec2>& ui, const std::vector<vec2>& f, const uint8_t& bits)
 	{
 		ui.clear();
+		ui.reserve(f.size());
 		for (uint32_t i = 0; i < f.size(); ++i) {
 			ivec2 value;
 			value.x = ToFx(f[i].x, bits);
@@ -47,11 +46,13 @@ namespace C3D {
 	static void LoopToFloatV3(std::vector<vec3>& f, const std::vector<ivec3>& ui, const uint8_t& bits)
 	{
 		f.clear();
+		f.reserve(ui.size());
+		float bitsValue = 1.0f / (float)(1 << bits);
 		for (uint32_t i = 0; i < ui.size(); ++i) {
 			vec3 value;
-			value.x = ToFloat(ui[i].x, bits);
-			value.y = ToFloat(ui[i].y, bits);
-			value.z = ToFloat(ui[i].z, bits);
+			value.x = ToFloat(ui[i].x, bitsValue);
+			value.y = ToFloat(ui[i].y, bitsValue);
+			value.z = ToFloat(ui[i].z, bitsValue);
 			f.emplace_back(value);
 		}
 	}
@@ -59,10 +60,12 @@ namespace C3D {
 	static void LoopToFloatV2(std::vector<vec2>& f, const std::vector<ivec2>& ui, const uint8_t& bits)
 	{
 		f.clear();
+		f.reserve(ui.size());
+		float bitsValue = 1 / (float)(1 << bits);
 		for (uint32_t i = 0; i < ui.size(); ++i) {
 			vec2 value;
-			value.x = ToFloat(ui[i].x, bits);
-			value.y = ToFloat(ui[i].y, bits);
+			value.x = ToFloat(ui[i].x, bitsValue);
+			value.y = ToFloat(ui[i].y, bitsValue);
 			f.emplace_back(value);
 		}
 	}
@@ -444,7 +447,7 @@ namespace C3D {
 		std::string path = newPath + ".C3D";
 		stream.open(path.c_str(), std::ofstream::out | std::ofstream::binary);
 #if FIXED_POINT
-		stream << bits << "\n";
+		stream << (uint32_t)bits << "\n";
 #endif
 #if NORMALIZE
 		stream << mm.v_min.x << " " << mm.v_min.y << " " << mm.v_min.z << "\n";
@@ -772,7 +775,14 @@ namespace C3D {
 		return true;
 	}
 
-	void Compressor::CompressModel(std::string path, std::string newPath, uint8_t quantizedBits = 0)
+
+	/** brief: Compression function that creates a C3D format compressed file
+	* param path : Path of the original file to be compressed
+	* param newPath : Path and name for the final file
+	* param quantizedBits : Value that sets the desired level of accuracy for the compression, 
+	*						the higher the value, the higher the precision
+	*/
+	void Compressor::CompressModel(std::string path, std::string newPath, uint8_t quantizedBits = 8)
 	{
 		Timer::Start();
 		std::string auxPath = aux::SubString(path, ".");
@@ -812,6 +822,11 @@ namespace C3D {
 #endif
 	}
 	
+
+	/** brief: Decompression function that accepts a C3D format file
+	* param path : Path of the file to be decompressed
+	* param info : Structure in which the geometry and connectivity data of the model is stored by reference
+	*/
 	void Compressor::DecompressModel(std::string path, ObjData & info)
 	{
 		long time;
@@ -934,9 +949,10 @@ namespace C3D {
 		std::string createFile = ".\\objTest\\" + path.substr(0, idx) + "\\";
 		std::filesystem::create_directories(createFile.c_str());
 		std::string newPath;
+		newPath = createFile + "FLOATING_POINT_Test_" + path.substr(0, idx);
 		if (FIXED_POINT) { newPath = createFile + std::to_string(g_quantizedBits) + "_Test_" + path.substr(0, idx); }
 		if (NORMALIZE) { newPath = createFile + std::to_string(g_quantizedBits) + "_Norm_Test_" + path.substr(0, idx);}
-		else { newPath = createFile + "FLOATING_POINT_Test_" + path.substr(0, idx); }
+		
 		WriteFileOBJ(newPath.c_str(), info);
 #endif
 

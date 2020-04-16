@@ -17,15 +17,15 @@ namespace C3D {
 
 	static struct ivec3
 	{
-		int16_t x, y, z;
+		int32_t x, y, z;
 		ivec3() : x(0), y(0), z(0) {}
-		ivec3(int16_t x, int16_t y, int16_t z) : x(x), y(y), z(z) { }
+		ivec3(int32_t x, int32_t y, int32_t z) : x(x), y(y), z(z) { }
 	};
 	static struct ivec2
 	{
 		int16_t x, y;
 		ivec2() : x(0), y(0) {}
-		ivec2(int16_t x, int16_t y) : x(x), y(y) { }
+		ivec2(int32_t x, int32_t y) : x(x), y(y) { }
 	};
 
 	//Reading info obj
@@ -38,7 +38,7 @@ namespace C3D {
 		std::vector<uint32_t> t_indexes;
 	};
 
-	//Info obj without floating point
+	//Info obj with applied fixed-point
 	static struct Data {
 		std::vector<ivec3> vertices;
 		std::vector<ivec3> normals;
