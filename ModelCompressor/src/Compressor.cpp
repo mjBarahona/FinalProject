@@ -4,8 +4,8 @@
 #include "Timer.h"
 #include "Aux_f.h"
 #define FIXED_POINT true
+#define NORMALIZE false
 #define WRITE_OBJ	true
-#define NORMALIZE true
 #define WRITE_FILE true
 
 //Globals, just to notes on the values of the model to be written in Aux_f
@@ -444,7 +444,7 @@ namespace C3D {
 
 #endif
 		std::ofstream stream;
-		std::string path = newPath + ".C3D";
+		std::string path = newPath + "_b_"+std::to_string(bits)+ "_" + ".C3D";
 		stream.open(path.c_str(), std::ofstream::out | std::ofstream::binary);
 #if FIXED_POINT
 		stream << (uint32_t)bits << "\n";
@@ -934,12 +934,13 @@ namespace C3D {
 		Dequantization(info,data,bits);
 		msg = "Decompression function with FIXED_POINT";
 #endif
-#if NORMALIZE
-		Denormalize(info, mm);
-#endif
+
 #if !FIXED_POINT
 		ParseStringToStruct(info, stream);
 		msg = "Decompression function with FLOATING_POINT";
+#endif
+#if NORMALIZE
+		Denormalize(info, mm);
 #endif
 		free(pUncomp);
 		free(cmp_p);
