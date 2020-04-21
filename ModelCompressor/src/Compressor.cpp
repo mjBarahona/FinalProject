@@ -4,9 +4,9 @@
 #include "Timer.h"
 #include "Aux_f.h"
 #define FIXED_POINT true
-#define NORMALIZE false
-#define WRITE_OBJ	true
-#define WRITE_FILE true
+#define NORMALIZE true
+#define WRITE_OBJ	false
+#define WRITE_FILE false
 
 //Globals, just to notes on the values of the model to be written in Aux_f
 mz_uint32 g_src_len;
@@ -413,7 +413,7 @@ namespace C3D {
 	}
 
 	template<class T>
-	static bool CompressFileWithMiniz(const T& data, std::string newPath, std::string textFile, uint8_t bits, const MinMax& mm) {
+	static bool CompressFileWithMiniz(const T& data, std::string newPath, uint8_t bits, const MinMax& mm) {
 
 		std::vector<std::string> parseData;
 		ParseStructToString(data, parseData);
@@ -444,7 +444,7 @@ namespace C3D {
 
 #endif
 		std::ofstream stream;
-		std::string path = newPath + "_b_"+std::to_string(bits)+ "_" + ".C3D";
+		std::string path = newPath + ".C3D";
 		stream.open(path.c_str(), std::ofstream::out | std::ofstream::binary);
 #if FIXED_POINT
 		stream << (uint32_t)bits << "\n";
@@ -805,12 +805,12 @@ namespace C3D {
 		pathToWrite += "FIXED_POINT_";
 		pathToWrite += std::to_string(quantizedBits);
 		Quantization(data, info, quantizedBits);
-		if(!CompressFileWithMiniz(data, newPath, auxPath, quantizedBits,mm)) { std::cout << "ERROR Compress" << std::endl; }
-		msg = "Compression function with FIXED_POINT";
+		if(!CompressFileWithMiniz(data, newPath, quantizedBits,mm)) { std::cout << "ERROR Compress" << std::endl; }
+		msg = "Compression function with " + pathToWrite + " " + path;
 #else
-		pathToWrite = "FLOATING_POINT";
+		pathToWrite += "FLOATING_POINT";
 		if (!CompressFileWithMiniz(info, newPath, auxPath, quantizedBits, mm)) { std::cout << "ERROR Compress" << std::endl; }
-		msg = "Compression function with FLOATING_POINT";
+		msg = "Compression function with " + pathToWrite;
 #endif
 		Timer::Time(msg,&time);
 #if WRITE_FILE
@@ -932,12 +932,12 @@ namespace C3D {
 		ParseStringToStruct(data, stream);
 		//Parse data struct to obj data
 		Dequantization(info,data,bits);
-		msg = "Decompression function with FIXED_POINT";
+		msg = "Decompression function with  " + path;
 #endif
 
 #if !FIXED_POINT
 		ParseStringToStruct(info, stream);
-		msg = "Decompression function with FLOATING_POINT";
+		msg = "Decompression function";
 #endif
 #if NORMALIZE
 		Denormalize(info, mm);
